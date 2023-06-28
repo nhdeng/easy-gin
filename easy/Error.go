@@ -48,7 +48,7 @@ func ErrorHandle() gin.HandlerFunc {
 				if os.Getenv("GIN_MODE") != "release" {
 					log.Println(panicTrace(10))
 				}
-				status := 400 //default status==400
+				status := 500
 				if value, exists := context.Get(HTTP_STATUS); exists {
 					if v, ok := value.(int); ok {
 						status = v
@@ -56,11 +56,19 @@ func ErrorHandle() gin.HandlerFunc {
 				}
 				if strE, ok := e.(string); ok {
 					printError(strE)
-					context.AbortWithStatusJSON(status, gin.H{"error": strE})
+					context.AbortWithStatusJSON(status, gin.H{
+						"code":    status,
+						"message": strE,
+						"stack":   panicTrace(10),
+					})
 				} else {
 					if pe, ok := e.(error); ok {
 						printError(pe.Error())
-						context.AbortWithStatusJSON(status, gin.H{"error": pe.Error()})
+						context.AbortWithStatusJSON(status, gin.H{
+							"code":    status,
+							"message": pe.Error(),
+							"stack":   panicTrace(10),
+						})
 					} else {
 						context.AbortWithStatusJSON(status, e)
 					}
