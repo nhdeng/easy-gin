@@ -59,7 +59,7 @@ func ErrorHandle() gin.HandlerFunc {
 					context.AbortWithStatusJSON(status, gin.H{
 						"code":    status,
 						"message": strE,
-						"stack":   panicTrace(10),
+						"data":    panicTrace(10),
 					})
 				} else {
 					if pe, ok := e.(error); ok {
@@ -67,7 +67,7 @@ func ErrorHandle() gin.HandlerFunc {
 						context.AbortWithStatusJSON(status, gin.H{
 							"code":    status,
 							"message": pe.Error(),
-							"stack":   panicTrace(10),
+							"data":    panicTrace(10),
 						})
 					} else {
 						context.AbortWithStatusJSON(status, e)
