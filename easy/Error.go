@@ -94,5 +94,4 @@ func Error(err error, msg ...string) {
 		}
 		panic(errMsg)
 	}
-
 }

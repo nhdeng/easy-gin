@@ -4,13 +4,8 @@ go 1.20
 
 require (
 	github.com/gin-gonic/gin v1.9.0
-	github.com/go-sql-driver/mysql v1.7.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/shenyisyn/goft-ioc v0.5.4
-	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/driver/mysql v1.5.1
-	gorm.io/gorm v1.25.1
-	xorm.io/xorm v1.3.2
 )
 
 require (

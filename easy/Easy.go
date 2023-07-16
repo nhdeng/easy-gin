@@ -41,13 +41,7 @@ func Ignite(ginMiddlewares ...gin.HandlerFunc) *Easy {
 		g.Use(handler)
 	}
 	Injector.BeanFactory.Set(g)
-	// 整个应用的配置加载进bean中
-	config := InitConfig()
-	Injector.BeanFactory.Set(config)
 	Injector.BeanFactory.Set(NewGPAUtil())
-	// 数据库实例对象加载进bean中
-	db := InitGorm()
-	Injector.BeanFactory.Set(db)
 	return g
 }
 
@@ -60,16 +54,24 @@ func (this *Easy) applyAll() {
 }
 
 // Launch 启动
-func (this *Easy) Launch() {
-	var port int32 = 8080
-	if config := Injector.BeanFactory.Get((*SysConfig)(nil)); config != nil {
-		port = config.(*SysConfig).Server.Port
-	}
+func (this *Easy) Launch(port int32, funcs ...interface{}) {
+	this.AfterLaunch(funcs...)
 	this.applyAll()
 	getCronTask().Start()
 	err := this.Run(fmt.Sprintf(":%d", port))
 	if err != nil {
 		log.Println(err)
+	}
+}
+
+// AfterLaunch 启动之后执行的方法
+func (this *Easy) AfterLaunch(exprs ...interface{}) {
+	for _, expr := range exprs {
+		if exp, ok := expr.(func()); ok {
+			exp()
+		} else {
+			fmt.Println("AfterLaunch只能接受func类型的参数")
+		}
 	}
 }
 
